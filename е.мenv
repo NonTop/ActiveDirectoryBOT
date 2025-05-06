@@ -1,0 +1,8 @@
+TOKEN=token                      # Изменить на свой ТОКЕН
+LDAP_SERVER=ldaps://ip                                        # Изменить на свой айпи сервера
+LDAP_BIND_USER=CN=password_admin,CN=Users,DC=test,DC=kz,DC=test             # Изменить на свой логин
+LDAP_BIND_PASSWORD=password                                            # Изменить на свой пароль от логина
+LDAP_BASE_DN=DC=test,DC=kz,DC=test                                          # Изменить на свою раскладку
+
+SMTP_USER = login@gmail.com                                     # Изменить на свой адрес отправки писем
+SMTP_PASSWORD = password                                 # Изменить на свой Пароль
