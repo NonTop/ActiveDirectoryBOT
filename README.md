@@ -1,2 +1,0 @@
-# ActiveDirectoryBOT
-Bot Active Directory
