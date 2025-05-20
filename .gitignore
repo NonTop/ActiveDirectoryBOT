@@ -17,13 +17,6 @@ Thumbs.db
 *.sqlite3
 *.db
 
-# Docker
-*.pid
-*.sock
-*.tar
-*.img
-docker-compose.override.yml
-
 # Virtualenv
 venv/
 env/
