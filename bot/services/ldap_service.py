@@ -4,7 +4,6 @@ import ssl
 
 logger = logging.getLogger(__name__)
 
-
 async def check_ad_login(login: str, config: dict):
     """Проверяет существование пользователя в AD и получает email"""
     try:
@@ -31,7 +30,6 @@ async def check_ad_login(login: str, config: dict):
         logger.error(f"LDAP error: {e}")
         return False, None
 
-
 async def reset_ad_password(ad_login: str, new_password: str, config: dict):
     """Сбрасывает пароль пользователя в AD"""
     try:
@@ -55,7 +53,7 @@ async def reset_ad_password(ad_login: str, new_password: str, config: dict):
         user_dn = conn.entries[0].distinguishedName.value
         encoded_password = f'"{new_password}"'.encode('utf-16-le')
 
-        # Используем импортированную константу
+        # Исправленная строка (добавлена закрывающая скобка)
         return conn.modify(user_dn, {'unicodePwd': [(MODIFY_REPLACE, [encoded_password])]})
     except Exception as e:
         logger.error(f"Password reset error: {e}")

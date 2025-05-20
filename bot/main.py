@@ -34,10 +34,6 @@ config = {
     'LDAP_BIND_USER': os.getenv("LDAP_BIND_USER"),
     'LDAP_BIND_PASSWORD': os.getenv("LDAP_BIND_PASSWORD"),
     'LDAP_BASE_DN': os.getenv("LDAP_BASE_DN"),
-    'SMTP_SERVER': "smtp.gmail.com",   # Изменить на smtp.office365.com
-    'SMTP_PORT': 587,
-    'SMTP_USER': os.getenv("SMTP_USER"),
-    'SMTP_PASSWORD': os.getenv("SMTP_PASSWORD")
 }
 
 async def wrap_cmd_start(message: types.Message, state: FSMContext):
@@ -66,8 +62,4 @@ async def main():
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
     asyncio.run(main())

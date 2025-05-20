@@ -7,10 +7,8 @@ from bot.handlers.states import AuthState
 import random
 import string
 
-
 async def generate_confirmation_code():
     return ''.join(random.choices(string.digits, k=6))
-
 
 async def cmd_start(message: types.Message, state: FSMContext, config: dict):
     user = await database.get_user_by_tg_id(message.from_user.id)
@@ -23,7 +21,6 @@ async def cmd_start(message: types.Message, state: FSMContext, config: dict):
     else:
         await message.answer("Введите ваш AD-логин:")
         await state.set_state(AuthState.awaiting_login)
-
 
 async def process_login(message: types.Message, state: FSMContext, config: dict):
     ad_login = message.text.strip().lower()
@@ -43,23 +40,23 @@ async def process_login(message: types.Message, state: FSMContext, config: dict)
         return
 
     found, email = await ldap_service.check_ad_login(ad_login, config)
+
     if not found or not email:
         await message.answer("Логин не найден в AD. Попробуйте еще раз.")
         return
 
     code = await generate_confirmation_code()
-    if await email_service.send_confirmation_email(email, code, config):
+    if await email_service.send_confirmation_email(email, code):
         await state.update_data(ad_login=ad_login, email=email, code=code)
-        await message.answer(f"Код отправлен на {email}. Введите его для подтверждения.")
+        await message.answer(f"✉️ Код отправлен на {email}. Введите его:")
         await state.set_state(AuthState.awaiting_code)
     else:
-        await message.answer("Ошибка отправки письма. Попробуйте позже.")
-
+        await message.answer("❌ Ошибка отправки письма. Попробуйте позже.")
 
 async def process_code(message: types.Message, state: FSMContext):
     data = await state.get_data()
     if message.text.strip() != data["code"]:
-        await message.answer("Неверный код. Попробуйте еще раз.")
+        await message.answer("❌ Неверный код. Попробуйте ещё раз.")
         return
 
     success = await database.save_user(
@@ -78,7 +75,6 @@ async def process_code(message: types.Message, state: FSMContext):
         await message.answer("⚠️ Произошла ошибка при сохранении данных!")
 
     await state.clear()
-
 
 async def retry_login(message: types.Message, state: FSMContext, config: dict):
     await cmd_start(message, state, config)

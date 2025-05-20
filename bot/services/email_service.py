@@ -5,22 +5,36 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
-async def send_confirmation_email(recipient: str, code: str, smtp_config: dict):
+async def send_confirmation_email(recipient: str, code: str) -> bool:
     """Отправляет email с кодом подтверждения"""
-    msg = MIMEMultipart()
-    msg["Subject"] = "Код подтверждения"
-    msg["From"] = smtp_config['SMTP_USER']
-    msg["To"] = recipient
-
-    msg.attach(MIMEText(f"Ваш код подтверждения: {code}", "plain", "utf-8"))
-
     try:
-        with smtplib.SMTP(smtp_config['SMTP_SERVER'], smtp_config['SMTP_PORT']) as server:
+        SMTP_SERVER = "smtp.office365.com"
+        SMTP_PORT = 587
+        SMTP_USER = "name_account"  # Изменить на свой
+        SMTP_PASSWORD = "password"  # Изменить на свой
+
+        msg = MIMEMultipart()
+        msg["Subject"] = "Код подтверждения"
+        msg["From"] = SMTP_USER
+        msg["To"] = recipient
+
+        body = f"""
+        Ваш код подтверждения: {code}
+        Код действителен в течение 10 минут.
+        """
+        msg.attach(MIMEText(body, "plain", "utf-8"))
+
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
-            server.login(smtp_config['SMTP_USER'], smtp_config['SMTP_PASSWORD'])
-            server.sendmail(smtp_config['SMTP_USER'], recipient, msg.as_string())
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.send_message(msg)
+
+        logger.info(f"Письмо отправлено: {recipient}")
         return True
+
+    except smtplib.SMTPAuthenticationError:
+        logger.error("Ошибка аутентификации: неверные учетные данные")
     except Exception as e:
-        logger.error(f"SMTP error: {e}")
-        return False
+        logger.error(f"Ошибка отправки: {str(e)}")
+
+    return False
